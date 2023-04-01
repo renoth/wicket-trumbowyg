@@ -52,6 +52,7 @@ public class TrumboWygBehavior extends Behavior {
 						TrumboWygBehavior.class,
 						"../../../../webjars/trumbowyg/2.27.3/dist/ui/icons.svg"));
 		final var svgUrl = RequestCycle.get().urlFor(handler).toString();
+		// TODO Provide Settings Factory
 		return String.format("$.trumbowyg.svgPath = '%1$s';$('#%2$s').trumbowyg();", svgUrl, component.getMarkupId());
 	}
 
