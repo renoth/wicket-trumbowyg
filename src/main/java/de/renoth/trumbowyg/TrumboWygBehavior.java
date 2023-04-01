@@ -19,7 +19,7 @@ import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.resource.JQueryResourceReference;
 
 /**
- * TODO
+ * @author renoth
  */
 public class TrumboWygBehavior extends Behavior {
 
