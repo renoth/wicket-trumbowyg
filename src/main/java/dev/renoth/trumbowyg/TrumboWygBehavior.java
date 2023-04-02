@@ -1,4 +1,4 @@
-package de.renoth.trumbowyg;
+package dev.renoth.trumbowyg;
 
 import java.util.List;
 
