@@ -18,10 +18,26 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.resource.JQueryResourceReference;
 
+import com.google.gson.Gson;
+
 /**
+ * Behavior that adds a Trumbowyg Richtext-Editor to a form component.
+ * 
  * @author renoth
  */
 public class TrumboWygBehavior extends Behavior {
+
+	private final TrumboWygSettings settings;
+
+	/**
+	 * Create a new TrumboWygBehavior
+	 * 
+	 * @param settings
+	 *            The {@link TrumboWygSettings} to be used.
+	 */
+	public TrumboWygBehavior(TrumboWygSettings settings) {
+		this.settings = settings;
+	}
 
 	@Override
 	public void renderHead(Component component, IHeaderResponse response) {
@@ -52,8 +68,15 @@ public class TrumboWygBehavior extends Behavior {
 						TrumboWygBehavior.class,
 						"../../../../webjars/trumbowyg/2.27.3/dist/ui/icons.svg"));
 		final var svgUrl = RequestCycle.get().urlFor(handler).toString();
+
 		// TODO Provide Settings Factory
-		return String.format("$.trumbowyg.svgPath = '%1$s';$('#%2$s').trumbowyg();", svgUrl, component.getMarkupId());
+		var settingsJson = new Gson().toJson(settings);
+		System.out.println(settingsJson);
+		return String.format(
+				"$.trumbowyg.svgPath = '%1$s';$('#%2$s').trumbowyg(%3$s);",
+				svgUrl,
+				component.getMarkupId(),
+				settingsJson);
 	}
 
 	@Override
