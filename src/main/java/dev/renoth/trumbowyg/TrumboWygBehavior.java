@@ -17,6 +17,8 @@ import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.resource.JQueryResourceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 
@@ -26,6 +28,9 @@ import com.google.gson.Gson;
  * @author renoth
  */
 public class TrumboWygBehavior extends Behavior {
+
+	private static final Logger LOG = LoggerFactory.getLogger(TrumboWygBehavior.class);
+	private static final String TRUMBOWYG_RESOURCE_PATH = "../../../webjars/trumbowyg/2.27.3/dist";
 
 	private final TrumboWygSettings settings;
 
@@ -51,12 +56,31 @@ public class TrumboWygBehavior extends Behavior {
 					JavaScriptHeaderItem.forReference(
 							new TrumbowygJavaScriptResourceReference(
 									TrumboWygBehavior.class,
-									"../../../../webjars/trumbowyg/2.27.3/dist/trumbowyg.js")));
+									TRUMBOWYG_RESOURCE_PATH + "/trumbowyg.js")));
 			response.render(
 					CssHeaderItem.forReference(
 							new CssResourceReference(
 									TrumboWygBehavior.class,
-									"../../../../webjars/trumbowyg/2.27.3/dist/ui/trumbowyg.css")));
+									TRUMBOWYG_RESOURCE_PATH + "/ui/trumbowyg.css")));
+
+			response.render(
+					JavaScriptHeaderItem.forReference(
+							new JavaScriptResourceReference(
+									TrumboWygBehavior.class,
+									String.format(
+											"%1$s/langs/%2$s.js",
+											TRUMBOWYG_RESOURCE_PATH,
+											settings.getLang().name()))));
+
+			settings.getPlugins().forEach(
+					p -> response.render(
+							JavaScriptHeaderItem.forReference(
+									new JavaScriptResourceReference(
+											TrumboWygBehavior.class,
+											String.format(
+													"%1$s/plugins/%2$s/trumbowyg.%2$s.js",
+													TRUMBOWYG_RESOURCE_PATH,
+													p.name())))));
 
 			response.render(new OnDomReadyHeaderItem(getInitScript(component)));
 		}
@@ -66,12 +90,11 @@ public class TrumboWygBehavior extends Behavior {
 		final var handler = new ResourceReferenceRequestHandler(
 				new PackageResourceReference(
 						TrumboWygBehavior.class,
-						"../../../../webjars/trumbowyg/2.27.3/dist/ui/icons.svg"));
+						TRUMBOWYG_RESOURCE_PATH + "/ui/icons.svg"));
 		final var svgUrl = RequestCycle.get().urlFor(handler).toString();
 
-		// TODO Provide Settings Factory
 		var settingsJson = new Gson().toJson(settings);
-		System.out.println(settingsJson);
+		LOG.info(settingsJson);
 		return String.format(
 				"$.trumbowyg.svgPath = '%1$s';$('#%2$s').trumbowyg(%3$s);",
 				svgUrl,
