@@ -1,5 +1,6 @@
 package dev.renoth.trumbowyg;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.wicket.Application;
@@ -42,6 +43,19 @@ public class TrumboWygBehavior extends Behavior {
 	 */
 	public TrumboWygBehavior(TrumboWygSettings settings) {
 		this.settings = settings;
+		checkSettings();
+	}
+
+	private void checkSettings() {
+		settings.getBtns().stream().flatMap(Collection::stream)
+				.filter(
+						btn -> btn.getRequiredPlugin().isPresent()
+								&& !settings.getPlugins().contains(btn.getRequiredPlugin().get()))
+				.forEachOrdered(
+						btn -> LOG.warn(
+								"{} requires Plugin {} but is not loaded",
+								btn.name(),
+								btn.getRequiredPlugin().get()));
 	}
 
 	@Override
@@ -73,14 +87,24 @@ public class TrumboWygBehavior extends Behavior {
 											settings.getLang().name()))));
 
 			settings.getPlugins().forEach(
-					p -> response.render(
-							JavaScriptHeaderItem.forReference(
-									new JavaScriptResourceReference(
-											TrumboWygBehavior.class,
-											String.format(
-													"%1$s/plugins/%2$s/trumbowyg.%2$s.js",
-													TRUMBOWYG_RESOURCE_PATH,
-													p.name())))));
+					p -> {
+						response.render(
+								JavaScriptHeaderItem.forReference(
+										new JavaScriptResourceReference(
+												TrumboWygBehavior.class,
+												String.format(
+														"%1$s/plugins/%2$s/trumbowyg.%2$s.js",
+														TRUMBOWYG_RESOURCE_PATH,
+														p.name()))));
+						response.render(
+								CssHeaderItem.forReference(
+										new CssResourceReference(
+												TrumboWygBehavior.class,
+												String.format(
+														"%1$s/plugins/%2$s/ui/trumbowyg.%2$s.css",
+														TRUMBOWYG_RESOURCE_PATH,
+														p.name()))));
+					});
 
 			response.render(new OnDomReadyHeaderItem(getInitScript(component)));
 		}
@@ -94,7 +118,8 @@ public class TrumboWygBehavior extends Behavior {
 		final var svgUrl = RequestCycle.get().urlFor(handler).toString();
 
 		var settingsJson = new Gson().toJson(settings);
-		LOG.info(settingsJson);
+		LOG.debug("Settings: %s".formatted(settingsJson));
+
 		return String.format(
 				"$.trumbowyg.svgPath = '%1$s';$('#%2$s').trumbowyg(%3$s);",
 				svgUrl,

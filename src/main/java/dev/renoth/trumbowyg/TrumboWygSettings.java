@@ -3,13 +3,12 @@ package dev.renoth.trumbowyg;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class TrumboWygSettings implements Serializable {
-	private String prefix;
 	private final TrumboWygLanguage lang;
 	private final Set<TrumboWygPlugin> pluginsSet = new HashSet<>();
 	private final List<List<TrumboWygButton>> btns = new ArrayList<>();
@@ -20,17 +19,6 @@ public class TrumboWygSettings implements Serializable {
 
 	public static TrumboWygSettings getInstance(TrumboWygLanguage lang) {
 		return new TrumboWygSettings(lang);
-	}
-
-	public TrumboWygSettings withPrefix(String prefix) {
-		this.prefix = prefix;
-		return this;
-	}
-
-	public TrumboWygSettings withPlugins(TrumboWygPlugin... plugins) {
-		Collections.addAll(pluginsSet, plugins);
-
-		return this;
 	}
 
 	public Set<TrumboWygPlugin> getPlugins() {
@@ -45,7 +33,9 @@ public class TrumboWygSettings implements Serializable {
 		return new TrumboWygButtonBuilder(this);
 	}
 
-	private List<List<TrumboWygButton>> getBtns() {
+	// TODO Method for default button configuration
+
+	public List<List<TrumboWygButton>> getBtns() {
 		return btns;
 	}
 
@@ -57,7 +47,13 @@ public class TrumboWygSettings implements Serializable {
 		}
 
 		public TrumboWygButtonBuilder withButtonGroup(TrumboWygButton... buttons) {
-			settings.getBtns().add(Arrays.asList(buttons));
+			var buttonList = Arrays.asList(buttons);
+			settings.getBtns().add(buttonList);
+			settings.getPlugins().addAll(
+					buttonList.stream()
+							.filter(button -> button.getRequiredPlugin().isPresent())
+							.map(button -> button.getRequiredPlugin().get())
+							.collect(Collectors.toSet()));
 
 			return this;
 		}
