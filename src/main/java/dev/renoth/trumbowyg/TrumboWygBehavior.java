@@ -26,7 +26,7 @@ import com.google.gson.Gson;
 /**
  * Behavior that adds a Trumbowyg Richtext-Editor to a form component.
  * 
- * @author renoth
+ * @author Johannes Renoth
  */
 public class TrumboWygBehavior extends Behavior {
 
@@ -55,7 +55,7 @@ public class TrumboWygBehavior extends Behavior {
 						btn -> LOG.warn(
 								"{} requires Plugin {} but is not loaded",
 								btn.name(),
-								btn.getRequiredPlugin().get()));
+								btn.getRequiredPlugin().orElseGet(null)));
 	}
 
 	@Override
@@ -96,14 +96,17 @@ public class TrumboWygBehavior extends Behavior {
 														"%1$s/plugins/%2$s/trumbowyg.%2$s.js",
 														TRUMBOWYG_RESOURCE_PATH,
 														p.name()))));
-						response.render(
-								CssHeaderItem.forReference(
-										new CssResourceReference(
-												TrumboWygBehavior.class,
-												String.format(
-														"%1$s/plugins/%2$s/ui/trumbowyg.%2$s.css",
-														TRUMBOWYG_RESOURCE_PATH,
-														p.name()))));
+
+						if (p.hasCss()) {
+							response.render(
+									CssHeaderItem.forReference(
+											new CssResourceReference(
+													TrumboWygBehavior.class,
+													String.format(
+															"%1$s/plugins/%2$s/ui/trumbowyg.%2$s.css",
+															TRUMBOWYG_RESOURCE_PATH,
+															p.name()))));
+						}
 					});
 
 			response.render(new OnDomReadyHeaderItem(getInitScript(component)));
@@ -118,7 +121,7 @@ public class TrumboWygBehavior extends Behavior {
 		final var svgUrl = RequestCycle.get().urlFor(handler).toString();
 
 		var settingsJson = new Gson().toJson(settings);
-		LOG.debug("Settings: %s".formatted(settingsJson));
+		LOG.info("Settings: %s".formatted(settingsJson));
 
 		return String.format(
 				"$.trumbowyg.svgPath = '%1$s';$('#%2$s').trumbowyg(%3$s);",

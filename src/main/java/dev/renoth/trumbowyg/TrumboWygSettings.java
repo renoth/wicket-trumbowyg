@@ -12,6 +12,7 @@ public class TrumboWygSettings implements Serializable {
 	private final TrumboWygLanguage lang;
 	private final Set<TrumboWygPlugin> pluginsSet = new HashSet<>();
 	private final List<List<TrumboWygButton>> btns = new ArrayList<>();
+	private boolean defaultButtons = true;
 
 	private TrumboWygSettings(TrumboWygLanguage lang) {
 		this.lang = lang;
@@ -29,11 +30,15 @@ public class TrumboWygSettings implements Serializable {
 		return lang;
 	}
 
-	public TrumboWygButtonBuilder addButtons() {
-		return new TrumboWygButtonBuilder(this);
+	public boolean isDefaultButtons() {
+		return defaultButtons;
 	}
 
-	// TODO Method for default button configuration
+	public TrumboWygButtonBuilder addButtons() {
+		this.defaultButtons = false;
+
+		return new TrumboWygButtonBuilder(this);
+	}
 
 	public List<List<TrumboWygButton>> getBtns() {
 		return btns;
