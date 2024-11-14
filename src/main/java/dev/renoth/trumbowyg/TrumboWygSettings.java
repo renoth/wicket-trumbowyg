@@ -3,16 +3,26 @@ package dev.renoth.trumbowyg;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.google.gson.annotations.Expose;
+
 public class TrumboWygSettings implements Serializable {
+
+	@Expose
 	private final TrumboWygLanguage lang;
-	private final Set<TrumboWygPlugin> pluginsSet = new HashSet<>();
+	@Expose
+	private final HashMap<TrumboWygPlugin, Object> plugins = new HashMap<>();
+	@Expose
 	private final List<List<TrumboWygButton>> btns = new ArrayList<>();
+	@Expose
 	private boolean defaultButtons = true;
+
+	private final Set<TrumboWygPlugin> pluginsSet = new HashSet<>();
 
 	private TrumboWygSettings(TrumboWygLanguage lang) {
 		this.lang = lang;
@@ -38,6 +48,12 @@ public class TrumboWygSettings implements Serializable {
 		this.defaultButtons = false;
 
 		return new TrumboWygButtonBuilder(this);
+	}
+
+	public TrumboWygSettings withPluginSetting(TrumboWygPlugin name, Object value) {
+		plugins.put(name, value);
+
+		return this;
 	}
 
 	public List<List<TrumboWygButton>> getBtns() {

@@ -6,7 +6,7 @@
 
 	<groupId>dev.renoth</groupId>
 	<artifactId>wicket-trumbowyg</artifactId>
-	<version>0.2</version>
+	<version>0.3</version>
 	<packaging>jar</packaging>
 	<name>Wicket Trumbowyg</name>
 	<description>Integration of trumbowyg with the Wicket Framework</description>
@@ -36,7 +36,7 @@
 		<dependency>
 			<groupId>org.webjars.npm</groupId>
 			<artifactId>trumbowyg</artifactId>
-			<version>2.27.3</version>
+			<version>2.28.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.wicket</groupId>

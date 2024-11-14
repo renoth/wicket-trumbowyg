@@ -21,7 +21,7 @@ import org.apache.wicket.resource.JQueryResourceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * Behavior that adds a Trumbowyg Richtext-Editor to a form component.
@@ -31,7 +31,7 @@ import com.google.gson.Gson;
 public class TrumboWygBehavior extends Behavior {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TrumboWygBehavior.class);
-	private static final String TRUMBOWYG_RESOURCE_PATH = "../../../webjars/trumbowyg/2.27.3/dist";
+	private static final String TRUMBOWYG_RESOURCE_PATH = "../../../webjars/trumbowyg/2.28.0/dist";
 
 	private final TrumboWygSettings settings;
 
@@ -120,8 +120,9 @@ public class TrumboWygBehavior extends Behavior {
 						TRUMBOWYG_RESOURCE_PATH + "/ui/icons.svg"));
 		final var svgUrl = RequestCycle.get().urlFor(handler).toString();
 
-		var settingsJson = new Gson().toJson(settings);
-		LOG.info("Settings: %s".formatted(settingsJson));
+		var settingsJson = new GsonBuilder()
+				.excludeFieldsWithoutExposeAnnotation().create().toJson(settings);
+		LOG.debug("Settings: {}", settingsJson);
 
 		return String.format(
 				"$.trumbowyg.svgPath = '%1$s';$('#%2$s').trumbowyg(%3$s);",

@@ -6,7 +6,7 @@ public enum TrumboWygButton {
 	viewHTML,
 	undo, redo,
 	formatting,
-	strong, em, del,
+	strong, em, underline, del,
 	superscript, subscript,
 	link,
 	insertImage,
