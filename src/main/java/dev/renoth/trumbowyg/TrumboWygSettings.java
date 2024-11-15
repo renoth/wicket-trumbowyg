@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,10 +20,12 @@ public class TrumboWygSettings implements Serializable {
 	private final HashMap<TrumboWygPlugin, Object> plugins = new HashMap<>();
 	@Expose
 	private final List<List<TrumboWygButton>> btns = new ArrayList<>();
-	@Expose
-	private boolean defaultButtons = true;
 
+	private boolean defaultButtons = true;
 	private final Set<TrumboWygPlugin> pluginsSet = new HashSet<>();
+	private final Map<TrumboWygCustomSettings, String> customSettings = new HashMap<>();
+	private final Map<TrumboWygCustomListSettings, List<String>> customListSettings = new HashMap<>();
+	private final Map<TrumboWygCustomMapSettings, Map<String, String>> customMapSettings = new HashMap<>();
 
 	private TrumboWygSettings(TrumboWygLanguage lang) {
 		this.lang = lang;
@@ -56,8 +59,38 @@ public class TrumboWygSettings implements Serializable {
 		return this;
 	}
 
+	public TrumboWygSettings withCustomSetting(TrumboWygCustomSettings name, String value) {
+		customSettings.put(name, value);
+
+		return this;
+	}
+
+	public TrumboWygSettings withCustomListSetting(TrumboWygCustomListSettings name, List<String> value) {
+		customListSettings.put(name, value);
+
+		return this;
+	}
+
+	public TrumboWygSettings withCustomMapSetting(TrumboWygCustomMapSettings name, Map<String, String> value) {
+		customMapSettings.put(name, value);
+
+		return this;
+	}
+
 	public List<List<TrumboWygButton>> getBtns() {
 		return btns;
+	}
+
+	public Map<TrumboWygCustomSettings, String> getCustomSettings() {
+		return customSettings;
+	}
+
+	public Map<TrumboWygCustomListSettings, List<String>> getCustomListSettings() {
+		return customListSettings;
+	}
+
+	public Map<TrumboWygCustomMapSettings, Map<String, String>> getCustomMapSettings() {
+		return customMapSettings;
 	}
 
 	public static class TrumboWygButtonBuilder {

@@ -1,5 +1,6 @@
 package dev.renoth.trumbowyg;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 
@@ -21,7 +22,12 @@ import org.apache.wicket.resource.JQueryResourceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 /**
  * Behavior that adds a Trumbowyg Richtext-Editor to a form component.
@@ -113,7 +119,7 @@ public class TrumboWygBehavior extends Behavior {
 		}
 	}
 
-	private String getInitScript(Component component) {
+	String getInitScript(Component component) {
 		final var handler = new ResourceReferenceRequestHandler(
 				new PackageResourceReference(
 						TrumboWygBehavior.class,
@@ -121,7 +127,8 @@ public class TrumboWygBehavior extends Behavior {
 		final var svgUrl = RequestCycle.get().urlFor(handler).toString();
 
 		var settingsJson = new GsonBuilder()
-				.excludeFieldsWithoutExposeAnnotation().create().toJson(settings);
+				.registerTypeAdapter(TrumboWygSettings.class, new TrumboWygSettingsJsonSerializer()).create()
+				.toJson(settings);
 		LOG.debug("Settings: {}", settingsJson);
 
 		return String.format(
@@ -159,6 +166,25 @@ public class TrumboWygBehavior extends Behavior {
 			dependencies.add(JavaScriptHeaderItem.forReference(backingLibraryReference));
 
 			return dependencies;
+		}
+	}
+
+	private static class TrumboWygSettingsJsonSerializer implements JsonSerializer<TrumboWygSettings> {
+		@Override
+		public JsonElement serialize(TrumboWygSettings src, Type typeOfSrc, JsonSerializationContext context) {
+			Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+			JsonObject jObj = (JsonObject) gson.toJsonTree(src);
+
+			if (src.isDefaultButtons()) {
+				jObj.remove("btns");
+				jObj.remove("plugins");
+			}
+
+			src.getCustomSettings().forEach((key, value) -> jObj.addProperty(key.name(), value));
+			src.getCustomListSettings().forEach((key, value) -> jObj.add(key.name(), gson.toJsonTree(value)));
+			src.getCustomMapSettings().forEach((key, value) -> jObj.add(key.name(), gson.toJsonTree(value)));
+
+			return jObj;
 		}
 	}
 }
