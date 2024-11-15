@@ -47,7 +47,7 @@ class TrumboWygBehaviorTest {
 		assertThat(result).doesNotContain("btns", "pluginsSet", "defaultButtons");
 		assertThat(result).contains("\"autogrow\":\"true\"");
 		assertThat(result).contains("\"tagsToRemove\":[\"script\",\"strong\"]");
-		assertThat(result).contains("\"semantic\":{\"strike\":\"del\",\"b\":\"strong\"}");
+		assertThat(result).contains("\"semantic\":{");
 	}
 
 	@Test

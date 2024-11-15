@@ -3,7 +3,7 @@ package dev.renoth.trumbowyg;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -17,15 +17,17 @@ public class TrumboWygSettings implements Serializable {
 	@Expose
 	private final TrumboWygLanguage lang;
 	@Expose
-	private final HashMap<TrumboWygPlugin, Object> plugins = new HashMap<>();
+	private final Map<TrumboWygPlugin, Object> plugins = new EnumMap<>(TrumboWygPlugin.class);
 	@Expose
 	private final List<List<TrumboWygButton>> btns = new ArrayList<>();
 
 	private boolean defaultButtons = true;
 	private final Set<TrumboWygPlugin> pluginsSet = new HashSet<>();
-	private final Map<TrumboWygCustomSettings, String> customSettings = new HashMap<>();
-	private final Map<TrumboWygCustomListSettings, List<String>> customListSettings = new HashMap<>();
-	private final Map<TrumboWygCustomMapSettings, Map<String, String>> customMapSettings = new HashMap<>();
+	private final Map<TrumboWygCustomSettings, String> customSettings = new EnumMap<>(TrumboWygCustomSettings.class);
+	private final Map<TrumboWygCustomListSettings, List<String>> customListSettings =
+			new EnumMap<>(TrumboWygCustomListSettings.class);
+	private final Map<TrumboWygCustomMapSettings, Map<String, String>> customMapSettings =
+			new EnumMap<>(TrumboWygCustomMapSettings.class);
 
 	private TrumboWygSettings(TrumboWygLanguage lang) {
 		this.lang = lang;
