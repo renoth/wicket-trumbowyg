@@ -28,6 +28,7 @@ public class TrumboWygSettings implements Serializable {
 			new EnumMap<>(TrumboWygCustomListSettings.class);
 	private final Map<TrumboWygCustomMapSettings, Map<String, String>> customMapSettings =
 			new EnumMap<>(TrumboWygCustomMapSettings.class);
+	private final Map<TrumboWygEvent, String> customEventCallbacks = new EnumMap<>(TrumboWygEvent.class);
 
 	private TrumboWygSettings(TrumboWygLanguage lang) {
 		this.lang = lang;
@@ -79,6 +80,32 @@ public class TrumboWygSettings implements Serializable {
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * Provide a JS function for a Trumbowyg-Event. Only the Function body needs to be provided.
+	 * </p>
+	 * <p>
+	 * Example:
+	 * </p>
+	 * 
+	 * <pre>
+	 * settings.withCustomEventCallback(TrumboWygEvent.tbwchange, "console.log('change!');");
+	 * </pre>
+	 *
+	 * Result in Browser:
+	 * 
+	 * <pre>
+	 *     .on('tbwchange', function(){ console.log('change!'); });
+	 * </pre>
+	 *
+	 * @see @see <a href="https://alex-d.github.io/Trumbowyg/documentation/#events">Trumbowyg Events</a>
+	 */
+	public TrumboWygSettings withCustomEventCallback(TrumboWygEvent eventName, String callbackFunction) {
+		customEventCallbacks.put(eventName, callbackFunction);
+
+		return this;
+	}
+
 	public List<List<TrumboWygButton>> getBtns() {
 		return btns;
 	}
@@ -93,6 +120,10 @@ public class TrumboWygSettings implements Serializable {
 
 	public Map<TrumboWygCustomMapSettings, Map<String, String>> getCustomMapSettings() {
 		return customMapSettings;
+	}
+
+	public Map<TrumboWygEvent, String> getCustomEventCallbacks() {
+		return customEventCallbacks;
 	}
 
 	public static class TrumboWygButtonBuilder {

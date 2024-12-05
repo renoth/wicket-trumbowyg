@@ -84,6 +84,43 @@ class TrumboWygBehaviorTest {
 	}
 
 	@Test
+	void testWithEventCallbacks() {
+		// Arrange
+		var settings = TrumboWygSettings.getInstance(TrumboWygLanguage.de).addButtons()
+				.withButtonGroup(TrumboWygButton.noembed, TrumboWygButton.del)
+				.withButtonGroup(TrumboWygButton.fontfamily, TrumboWygButton.fontsize).done()
+				.withPluginSetting(
+						TrumboWygPlugin.fontsize,
+						Map.of(
+								TrumboWygPluginSettings.fontsize_sizeList,
+								Arrays.asList("10px", "12px", "14px")))
+				.withPluginSetting(
+						TrumboWygPlugin.fontfamily,
+						Map.of(
+								TrumboWygPluginSettings.fontfamily_fontList,
+								List.of(
+										Map.of("name", "Arial", "family", "Arial, Helvetica, sans-serif"),
+										Map.of("name", "Times New Roman", "family", "times new roman"))))
+				.withCustomEventCallback(TrumboWygEvent.tbwchange, "console.log('Changed');")
+				.withCustomEventCallback(TrumboWygEvent.tbwfocus, "console.log('Focused');");
+		var cut = new TrumboWygBehavior(settings);
+
+		// Act
+		String result = getInitScript(cut);
+
+		// Assert
+		assertThat(settings.getPlugins())
+				.containsExactlyInAnyOrder(
+						TrumboWygPlugin.noembed,
+						TrumboWygPlugin.fontfamily,
+						TrumboWygPlugin.fontsize);
+		assertThat(result).contains("\"btns\":[[\"noembed\",\"del\"]");
+		assertThat(result).contains("\"lang\":\"de\"");
+		assertThat(result).contains(".on('tbwchange', function(){console.log('Changed');})");
+		assertThat(result).contains(".on('tbwfocus', function(){console.log('Focused');})");
+	}
+
+	@Test
 	void setLanguage() {
 		// Arrange
 		var settings = TrumboWygSettings.getInstance(TrumboWygLanguage.de);

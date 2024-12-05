@@ -131,11 +131,19 @@ public class TrumboWygBehavior extends Behavior {
 				.toJson(settings);
 		LOG.debug("Settings: {}", settingsJson);
 
-		return String.format(
-				"$.trumbowyg.svgPath = '%1$s';$('#%2$s').trumbowyg(%3$s);",
-				svgUrl,
-				component.getMarkupId(),
-				settingsJson);
+		var script = new StringBuilder(
+				String.format(
+						"$.trumbowyg.svgPath = '%1$s';$('#%2$s').trumbowyg(%3$s)",
+						svgUrl,
+						component.getMarkupId(),
+						settingsJson));
+
+		settings.getCustomEventCallbacks().entrySet().forEach(
+				entry -> script.append(".on('%s', function(){%s})".formatted(entry.getKey(), entry.getValue())));
+
+		script.append(";");
+
+		return script.toString();
 	}
 
 	@Override
