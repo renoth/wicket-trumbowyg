@@ -144,7 +144,8 @@ public class TrumboWygBehavior extends Behavior {
 
 		if (settings.isUpdateOnChange()) {
 			script.append(
-					".on('%1$s', function(){ document.getElementById('%2$s').value = $('#%2$s').trumbowyg('html'); })"
+					(".on('%1$s', function(){ document.getElementById('%2$s').value = $('#%2$s').trumbowyg('html'); "
+							+ "document.getElementById('%2$s').dispatchEvent(new Event('change')); })")
 							.formatted(TrumboWygEvent.tbwchange, markupId));
 		}
 
