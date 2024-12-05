@@ -124,7 +124,9 @@ class TrumboWygBehaviorTest {
 	@Test
 	void testWithUpdateOnChange() {
 		// Arrange
-		var settings = TrumboWygSettings.getInstance(TrumboWygLanguage.de).withUpdateOnChange(true);
+		var settings = TrumboWygSettings.getInstance(TrumboWygLanguage.de)
+				.withUpdateOnChange(true)
+				.withOnChangeThrottleMs(250);
 		var cut = new TrumboWygBehavior(settings);
 
 		// Act

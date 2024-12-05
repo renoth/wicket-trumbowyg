@@ -144,9 +144,10 @@ public class TrumboWygBehavior extends Behavior {
 
 		if (settings.isUpdateOnChange()) {
 			script.append(
-					(".on('%1$s', function(){ document.getElementById('%2$s').value = $('#%2$s').trumbowyg('html'); "
-							+ "document.getElementById('%2$s').dispatchEvent(new Event('change')); })")
-							.formatted(TrumboWygEvent.tbwchange, markupId));
+					(".on('%1$s', function(){ if (window.trumbowyg_timeout_ref != null) {clearTimeout(window.trumbowyg_timeout_ref);} "
+							+ "window.trumbowyg_timeout_ref = setTimeout(() => {document.getElementById('%2$s').value = $('#%2$s').trumbowyg('html'); "
+							+ "document.getElementById('%2$s').dispatchEvent(new Event('change'));}, %3$s); })")
+							.formatted(TrumboWygEvent.tbwchange, markupId, settings.getOnChangeThrottleMs()));
 		}
 
 		script.append(";");

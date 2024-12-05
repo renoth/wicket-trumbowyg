@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+
 import com.google.gson.annotations.Expose;
 
 public class TrumboWygSettings implements Serializable {
@@ -30,6 +32,7 @@ public class TrumboWygSettings implements Serializable {
 	private final Map<TrumboWygCustomMapSettings, Map<String, String>> customMapSettings =
 			new EnumMap<>(TrumboWygCustomMapSettings.class);
 	private final Map<TrumboWygEvent, String> customEventCallbacks = new EnumMap<>(TrumboWygEvent.class);
+	private int onChangeThrottleMs = 0;
 
 	private TrumboWygSettings(TrumboWygLanguage lang) {
 		this.lang = lang;
@@ -59,7 +62,7 @@ public class TrumboWygSettings implements Serializable {
 
 	/**
 	 * If the value of the original Textarea should be upated with the editor contents after each change event. Useful
-	 * when using {@link org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior}
+	 * when using {@link AjaxFormComponentUpdatingBehavior}
 	 * 
 	 * @param updateOnChange
 	 *            true or false (default: false)
@@ -143,6 +146,16 @@ public class TrumboWygSettings implements Serializable {
 
 	public boolean isUpdateOnChange() {
 		return updateOnChange;
+	}
+
+	public Integer getOnChangeThrottleMs() {
+		return onChangeThrottleMs;
+	}
+
+	public TrumboWygSettings withOnChangeThrottleMs(int onChangeThrottleMs) {
+		this.onChangeThrottleMs = onChangeThrottleMs;
+
+		return this;
 	}
 
 	public static class TrumboWygButtonBuilder {
