@@ -22,6 +22,7 @@ public class TrumboWygSettings implements Serializable {
 	private final List<List<TrumboWygButton>> btns = new ArrayList<>();
 
 	private boolean defaultButtons = true;
+	private boolean updateOnChange = false;
 	private final Set<TrumboWygPlugin> pluginsSet = new HashSet<>();
 	private final Map<TrumboWygCustomSettings, String> customSettings = new EnumMap<>(TrumboWygCustomSettings.class);
 	private final Map<TrumboWygCustomListSettings, List<String>> customListSettings =
@@ -54,6 +55,20 @@ public class TrumboWygSettings implements Serializable {
 		this.defaultButtons = false;
 
 		return new TrumboWygButtonBuilder(this);
+	}
+
+	/**
+	 * If the value of the original Textarea should be upated with the editor contents after each change event. Useful
+	 * when using {@link org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior}
+	 * 
+	 * @param updateOnChange
+	 *            true or false (default: false)
+	 * @return this
+	 */
+	public TrumboWygSettings withUpdateOnChange(boolean updateOnChange) {
+		this.updateOnChange = updateOnChange;
+
+		return this;
 	}
 
 	public TrumboWygSettings withPluginSetting(TrumboWygPlugin name, Object value) {
@@ -98,7 +113,7 @@ public class TrumboWygSettings implements Serializable {
 	 *     .on('tbwchange', function(){ console.log('change!'); });
 	 * </pre>
 	 *
-	 * @see @see <a href="https://alex-d.github.io/Trumbowyg/documentation/#events">Trumbowyg Events</a>
+	 * @see <a href="https://alex-d.github.io/Trumbowyg/documentation/#events">Trumbowyg Events</a>
 	 */
 	public TrumboWygSettings withCustomEventCallback(TrumboWygEvent eventName, String callbackFunction) {
 		customEventCallbacks.put(eventName, callbackFunction);
@@ -124,6 +139,10 @@ public class TrumboWygSettings implements Serializable {
 
 	public Map<TrumboWygEvent, String> getCustomEventCallbacks() {
 		return customEventCallbacks;
+	}
+
+	public boolean isUpdateOnChange() {
+		return updateOnChange;
 	}
 
 	public static class TrumboWygButtonBuilder {

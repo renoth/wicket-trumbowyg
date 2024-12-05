@@ -125,6 +125,7 @@ public class TrumboWygBehavior extends Behavior {
 						TrumboWygBehavior.class,
 						TRUMBOWYG_RESOURCE_PATH + "/ui/icons.svg"));
 		final var svgUrl = RequestCycle.get().urlFor(handler).toString();
+		final var markupId = component.getMarkupId();
 
 		var settingsJson = new GsonBuilder()
 				.registerTypeAdapter(TrumboWygSettings.class, new TrumboWygSettingsJsonSerializer()).create()
@@ -135,11 +136,17 @@ public class TrumboWygBehavior extends Behavior {
 				String.format(
 						"$.trumbowyg.svgPath = '%1$s';$('#%2$s').trumbowyg(%3$s)",
 						svgUrl,
-						component.getMarkupId(),
+						markupId,
 						settingsJson));
 
-		settings.getCustomEventCallbacks().entrySet().forEach(
-				entry -> script.append(".on('%s', function(){%s})".formatted(entry.getKey(), entry.getValue())));
+		settings.getCustomEventCallbacks()
+				.forEach((key, value) -> script.append(".on('%s', function(){%s})".formatted(key, value)));
+
+		if (settings.isUpdateOnChange()) {
+			script.append(
+					".on('%1$s', function(){ document.getElementById('%2$s').value = $('#%2$s').trumbowyg('html'); })"
+							.formatted(TrumboWygEvent.tbwchange, markupId));
+		}
 
 		script.append(";");
 

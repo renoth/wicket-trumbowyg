@@ -29,6 +29,7 @@ class TrumboWygBehaviorTest {
 		// Assert
 		assertThat(result).doesNotContain("btns", "pluginsSet", "defaultButtons");
 		assertThat(result).contains(".trumbowyg({\"lang\":\"de\"});");
+		assertThat(result).contains("$('#id123').trumbowyg(");
 	}
 
 	@Test
@@ -121,6 +122,19 @@ class TrumboWygBehaviorTest {
 	}
 
 	@Test
+	void testWithUpdateOnChange() {
+		// Arrange
+		var settings = TrumboWygSettings.getInstance(TrumboWygLanguage.de).withUpdateOnChange(true);
+		var cut = new TrumboWygBehavior(settings);
+
+		// Act
+		String result = getInitScript(cut);
+
+		// Assert
+		assertThat(result).contains("document.getElementById('id123').value = $('#id123').trumbowyg('html');");
+	}
+
+	@Test
 	void setLanguage() {
 		// Arrange
 		var settings = TrumboWygSettings.getInstance(TrumboWygLanguage.de);
@@ -140,7 +154,9 @@ class TrumboWygBehaviorTest {
 			var requestCycleMock = mock(RequestCycle.class);
 			when(requestCycleMock.urlFor(any())).thenReturn("http://test");
 			requestCycleMockedStatic.when(RequestCycle::get).thenReturn(requestCycleMock);
-			result = cut.getInitScript(mock(Label.class));
+			var component = mock(Label.class);
+			when(component.getMarkupId()).thenReturn("id123");
+			result = cut.getInitScript(component);
 		}
 
 		return result;
