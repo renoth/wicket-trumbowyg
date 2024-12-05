@@ -38,7 +38,8 @@ class TrumboWygBehaviorTest {
 		var settings = TrumboWygSettings.getInstance(TrumboWygLanguage.de)
 				.withCustomSetting(TrumboWygCustomSettings.autogrow, "true")
 				.withCustomListSetting(TrumboWygCustomListSettings.tagsToRemove, List.of("script", "strong"))
-				.withCustomMapSetting(TrumboWygCustomMapSettings.semantic, Map.of("b", "strong", "strike", "del"));
+				.withCustomMapSetting(TrumboWygCustomMapSettings.semantic, Map.of("b", "strong", "strike", "del"))
+				.withCustomMapSetting(TrumboWygCustomMapSettings.tagClasses, Map.of("ul", "standard"));
 		var cut = new TrumboWygBehavior(settings);
 
 		// Act
@@ -48,6 +49,7 @@ class TrumboWygBehaviorTest {
 		assertThat(result).doesNotContain("btns", "pluginsSet", "defaultButtons");
 		assertThat(result).contains("\"autogrow\":\"true\"");
 		assertThat(result).contains("\"tagsToRemove\":[\"script\",\"strong\"]");
+		assertThat(result).contains("\"tagClasses\":{\"ul\":\"standard\"}");
 		assertThat(result).contains("\"semantic\":{");
 	}
 
