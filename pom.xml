@@ -6,7 +6,7 @@
 
 	<groupId>dev.renoth</groupId>
 	<artifactId>wicket-trumbowyg</artifactId>
-	<version>0.6.4</version>
+	<version>0.6.5</version>
 	<packaging>jar</packaging>
 	<name>Wicket Trumbowyg</name>
 	<description>Integration of trumbowyg with the Wicket Framework</description>

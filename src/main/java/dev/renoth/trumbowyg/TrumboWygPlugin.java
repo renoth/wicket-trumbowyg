@@ -2,7 +2,7 @@ package dev.renoth.trumbowyg;
 
 @SuppressWarnings("java:S115")
 public enum TrumboWygPlugin {
-	allowtagsfrompaste(false),
+	allowTagsFromPaste(false),
 	base64(false),
 	cleanpaste(false),
 	colors(true),
